@@ -33,7 +33,7 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "http://localhost:5173",
-        "https://code-link-j19bdngh-tanvi9.vercel.app",
+        "https://code-link-j19bdnqgh-tanvi9.vercel.app",
     ],
     allow_credentials=True,
     allow_methods=["*"],
