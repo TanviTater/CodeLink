@@ -165,6 +165,58 @@ function ChallengeList({projectId,onOpen}:any){
      else setMsg(r.data.message||'Not complete yet. Repair the network and run a successful test.');
    }catch{setMsg('Could not verify this challenge. Check that the backend is running.')}
  }
- return <><div className="challenge-grid">{items.map((c:any)=><button className="panel challenge challenge-click" key={c.id} onClick={()=>onOpen(c)}><div className="challenge-card-top"><span className="pill">{c.difficulty}</span>{completed.includes(c.id)&&<span className="completion-tick" title="Completed"><CheckCircle2 size={19}/> Completed</span>}</div><b>{c.title}</b><p>{c.objective}</p><small>Scenario: {c.fault}</small><span className="challenge-open">Open instructions <ChevronRight size={13}/></span><span className="btn secondary full" onClick={e=>{e.stopPropagation();check(c.id)}}>{completed.includes(c.id)?'Verify again':'Verify latest run'}</span></button>)}</div>{msg&&<div className="notice">{msg}</div>}</>
+ 
+return (
+  <>
+    <div className="challenge-grid">
+      {items.map((c: any) => (
+        <div
+          className="panel challenge challenge-click"
+          key={c.id}
+          onClick={() => onOpen(c)}
+          role="button"
+          tabIndex={0}
+          onKeyDown={e => {
+            if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault();
+              onOpen(c);
+            }
+          }}
+        >
+          <div className="challenge-card-top">
+            <span className="pill">{c.difficulty}</span>
+            {completed.includes(c.id) && (
+              <span className="completion-tick" title="Completed">
+                <CheckCircle2 size={19} /> Completed
+              </span>
+            )}
+          </div>
+
+          <b>{c.title}</b>
+          <p>{c.objective}</p>
+          <small>Scenario: {c.fault}</small>
+
+          <span className="challenge-open">
+            Open instructions <ChevronRight size={13} />
+          </span>
+
+          <button
+            type="button"
+            className="btn secondary full"
+            onClick={e => {
+              e.stopPropagation();
+              check(c.id);
+            }}
+          >
+            {completed.includes(c.id) ? "Verify again" : "Verify latest run"}
+          </button>
+        </div>
+      ))}
+    </div>
+
+    {msg && <div className="notice">{msg}</div>}
+  </>
+);
 }
+
 function TcpSequence({events}:{events:any[]}){const steps=[{type:'tcp_syn',label:'SYN',from:'Client'},{type:'tcp_syn_ack',label:'SYN · ACK',from:'Server'},{type:'tcp_ack',label:'ACK',from:'Client'}];return <div className="tcp-sequence"><div className="tcp-title">TCP THREE-WAY HANDSHAKE <span>Time ↓</span></div><div className="tcp-lifelines"><div className="tcp-peer"><b>Client</b><small>Active open</small></div><div className="tcp-peer"><b>Server</b><small>LISTEN</small></div>{steps.map(s=>{const e=events.find(x=>x.type===s.type);return <div className={`tcp-step ${e?'present':''}`} key={s.type}><div className="tcp-step-meta">{e?`${e.type.replace('tcp_','').toUpperCase()} · ${e.timeMs} ms`:'Not emitted'}</div><div className={`tcp-arrow ${s.from==='Client'?'right':'left'}`}><span>{s.label}{e?` Seq ${e.sequence} · Ack ${e.acknowledgement}`:''}</span></div></div>})}</div><div className="tcp-caption">Sequence and acknowledgement values are taken from the backend event log.</div></div>}
