@@ -34,6 +34,7 @@ app.add_middleware(
     allow_origins=[
         "http://localhost:5173",
         "https://code-link-j19bdnqgh-tanvi9.vercel.app",
+        "https://code-link-nu.vercel.app",
     ],
     allow_credentials=True,
     allow_methods=["*"],
